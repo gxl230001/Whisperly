@@ -249,7 +249,6 @@ const SignupPage = () => {
       setIsSignupSuccess(true);
     }
   };
-
   return (
     <SignupContainer>
       <SignupBox>
