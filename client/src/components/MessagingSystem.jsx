@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { FaPlus, FaUserPlus } from 'react-icons/fa';
 
 const Container = styled.div`
   display: flex;
@@ -185,6 +186,45 @@ const Sidebar = styled.div`
   flex-direction: column;
 `;
 
+
+
+const OtherUsersList = styled.div`
+  margin: 0 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const AddFriendButton = styled.button`
+  background: #7AB2D0;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #6AA1BF;
+    transform: scale(1.1);
+  }
+`;
+
+const OtherUserItem = styled(ConversationItem)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+
+  &:hover {
+    background: #F0F9FF;
+  }
+`;
+
 const MessagingSystem = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -192,6 +232,10 @@ const MessagingSystem = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const friends = JSON.parse(localStorage.getItem('friends')) || [];
+  const [showOtherUsers, setShowOtherUsers] = useState(false);
+  const [otherUsers, setOtherUsers] = useState([]);
+  const [randomUsers, setRandomUsers] = useState([]);
+  const [showRandomUsers, setShowRandomUsers] = useState(false);
 
   const conversations = friends.map((friend) => ({
     id: friend._id,
@@ -246,6 +290,31 @@ const MessagingSystem = () => {
     });
   };
 
+  const getRandomUsers = () => {
+    const allUsers = JSON.parse(localStorage.getItem('all')) || [];
+    const currentFriends = JSON.parse(localStorage.getItem('friends')) || [];
+    
+    // Filter out current friends
+    const availableUsers = allUsers.filter(user => 
+      !currentFriends.some(friend => friend._id === user._id)
+    );
+    
+    // Shuffle and get up to 5 random users
+    const shuffled = availableUsers.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 5);
+  };
+
+  
+
+  const handleAddFriend = (user) => {
+    const currentFriends = JSON.parse(localStorage.getItem('friends')) || [];
+    const updatedFriends = [...currentFriends, user];
+    localStorage.setItem('friends', JSON.stringify(updatedFriends));
+    
+    // Remove user from otherUsers list
+    setOtherUsers(prevUsers => prevUsers.filter(u => u._id !== user._id));
+  };
+
   return (
     <Container>
       <ConversationsList>
@@ -270,6 +339,46 @@ const MessagingSystem = () => {
             </ConversationHeader>
           </ConversationItem>
         ))}
+      
+       
+        
+        {showRandomUsers && (
+          <OtherUsersList>
+            {randomUsers.map((user) => (
+              <OtherUserItem key={user._id}>
+                <ConversationHeader>
+                  <Avatar>{user.firstName[0]}</Avatar>
+                  <ConversationInfo>
+                    <Name>{`${user.firstName} ${user.lastName}`}</Name>
+                    <Role>Suggested Friend</Role>
+                  </ConversationInfo>
+                </ConversationHeader>
+                <AddFriendButton onClick={() => handleAddFriend(user)}>
+                  <FaUserPlus size={14} />
+                </AddFriendButton>
+              </OtherUserItem>
+            ))}
+          </OtherUsersList>
+        )}
+
+        {showOtherUsers && (
+          <OtherUsersList>
+            {otherUsers.map((user) => (
+              <OtherUserItem key={user._id}>
+                <ConversationHeader>
+                  <Avatar>{user.firstName[0]}</Avatar>
+                  <ConversationInfo>
+                    <Name>{`${user.firstName} ${user.lastName}`}</Name>
+                    <Role>Suggested Friend</Role>
+                  </ConversationInfo>
+                </ConversationHeader>
+                <AddFriendButton onClick={() => handleAddFriend(user)}>
+                  <FaUserPlus size={14} />
+                </AddFriendButton>
+              </OtherUserItem>
+            ))}
+          </OtherUsersList>
+        )}
       </ConversationsList>
 
       <ChatArea>

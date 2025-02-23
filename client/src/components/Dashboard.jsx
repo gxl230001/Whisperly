@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaPaw } from 'react-icons/fa';
 import whiskersLogo from '../assets/images/whiskers.png';
-import visitIcon from '../assets/images/a1.png';
 import a2 from '../assets/images/a2.png';
 import a3 from '../assets/images/a3.png';
 import a4 from '../assets/images/a4.png';
@@ -274,17 +273,6 @@ const HotlineLink = styled.a`
   }
 `;
 
-const DecorativeIcon = styled.img`
-  width: 250px;
-  height: 250px;
-  position: absolute;
-  top: -100px;
-  right: -100px;
-  opacity: 0.8;
-  pointer-events: none;
-  z-index: 1;
-`;
-
 const MoodContainer = styled.div`
   display: flex;
   flex-direction: column-reverse;
@@ -417,6 +405,76 @@ const BackButton = styled.button`
   }
 `;
 
+const UserGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+`;
+
+const UserCard = styled.div`
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+const UserAvatar = styled.img`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  border: 3px solid #8CC0DE;
+  padding: 2px;
+`;
+
+const UserName = styled.h3`
+  font-family: 'Poppins', sans-serif;
+  color: #2B4865;
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+`;
+
+const UserInfo = styled.p`
+  font-family: 'Poppins', sans-serif;
+  color: #256D85;
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+`;
+
+const AddFriendButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 20px;
+  background-color: #8CC0DE;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #7AB2D0;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
@@ -511,13 +569,57 @@ const Dashboard = () => {
           <>
             <HomeTitle>Visit</HomeTitle>
             <div style={{ position: 'relative' }}>
-              <DecorativeIcon src={visitIcon} alt="Visit" />
               <Chat />
             </div>
             <HotlinesContainer>
               <HotlineTitle>Crisis Support & Resources</HotlineTitle>
               <HotlineList>
-                {/* Keep all HotlineItems from the first version */}
+                <HotlineItem>
+                  <HotlineName>988 Suicide & Crisis Lifeline</HotlineName>
+                  <HotlineInfo>Dial 988 for 24/7 free and confidential support</HotlineInfo>
+                  <HotlineLink href="https://988lifeline.org/" target="_blank" rel="noopener noreferrer">
+                    Visit Website
+                  </HotlineLink>
+                </HotlineItem>
+                <HotlineItem>
+                  <HotlineName>Emergency Services</HotlineName>
+                  <HotlineInfo>Call 911 for immediate emergency assistance</HotlineInfo>
+                </HotlineItem>
+                <HotlineItem>
+                  <HotlineName>Veterans Crisis Line</HotlineName>
+                  <HotlineInfo>Dial 988, then press 1 for veteran-specific support</HotlineInfo>
+                  <HotlineLink href="https://www.veteranscrisisline.net/" target="_blank" rel="noopener noreferrer">
+                    Visit Website
+                  </HotlineLink>
+                </HotlineItem>
+                <HotlineItem>
+                  <HotlineName>Crisis Text Line</HotlineName>
+                  <HotlineInfo>Text HOME to 741741 for free 24/7 crisis counseling</HotlineInfo>
+                  <HotlineLink href="https://www.crisistextline.org/" target="_blank" rel="noopener noreferrer">
+                    Visit Website
+                  </HotlineLink>
+                </HotlineItem>
+                <HotlineItem>
+                  <HotlineName>National Alliance on Mental Illness (NAMI)</HotlineName>
+                  <HotlineInfo>Call 1-800-950-NAMI (6264) or text "HelpLine" to 62640</HotlineInfo>
+                  <HotlineLink href="https://www.nami.org/help" target="_blank" rel="noopener noreferrer">
+                    Visit Website
+                  </HotlineLink>
+                </HotlineItem>
+                <HotlineItem>
+                  <HotlineName>SAMHSA National Helpline</HotlineName>
+                  <HotlineInfo>Call 1-800-662-HELP (4357) for treatment referrals</HotlineInfo>
+                  <HotlineLink href="https://www.samhsa.gov/find-help/national-helpline" target="_blank" rel="noopener noreferrer">
+                    Visit Website
+                  </HotlineLink>
+                </HotlineItem>
+                <HotlineItem>
+                  <HotlineName>PTSD Foundation of America</HotlineName>
+                  <HotlineInfo>Call (877) 717-PTSD (7873) for veterans support</HotlineInfo>
+                  <HotlineLink href="https://ptsdusa.org/" target="_blank" rel="noopener noreferrer">
+                    Visit Website
+                  </HotlineLink>
+                </HotlineItem>
               </HotlineList>
             </HotlinesContainer>
           </>
@@ -527,6 +629,35 @@ const Dashboard = () => {
           <>
             <HomeTitle>Messages</HomeTitle>
             <MessagingSystem />
+          </>
+        );
+      case 'discover':
+        return (
+          <>
+            <HomeTitle>Discover</HomeTitle>
+            <div style={{ padding: '1rem' }}>
+              <p>Discover new people and make new friends!</p>
+              {(() => {
+                const users = JSON.parse(localStorage.getItem('all')) || [];
+                return (
+                  <UserGrid>
+                    {users.map((user) => (
+                      <UserCard key={user.firstName + user.lastName}>
+                        <UserAvatar 
+                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" 
+                          alt="User Avatar" 
+                        />
+                        <UserName>{user.firstName} {user.lastName}</UserName>
+                        <UserInfo>{user.mentalDisorders.join(', ')}</UserInfo>
+                        <AddFriendButton>
+                          <FaPaw /> Add Friend
+                        </AddFriendButton>
+                      </UserCard>
+                    ))}
+                  </UserGrid>
+                );
+              })()}
+            </div>
           </>
         );
       default:
@@ -561,6 +692,12 @@ const Dashboard = () => {
             active={currentView === 'messages'}
           >
             <FaPaw /> Messages
+          </PawButton>
+          <PawButton 
+            onClick={() => setCurrentView('discover')}
+            active={currentView === 'discover'}
+          >
+            <FaPaw /> Discover
           </PawButton>
           <WhiskersContainer onClick={handleWhiskersClick}>
             <WhiskersImage src={whiskersLogo} alt="Whiskers" />
