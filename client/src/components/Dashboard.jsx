@@ -10,6 +10,7 @@ import a3 from '../assets/images/a3.png';
 import a4 from '../assets/images/a4.png';
 import a5 from '../assets/images/a5.png';
 import a6 from '../assets/images/a6.png';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardContainer = styled.div`
   padding: 2rem;
@@ -387,11 +388,39 @@ const MoodMessage = styled.div`
   }
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #FF6B6B;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: #FF5252;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [currentView, setCurrentView] = useState('home');
   const [moodValue, setMoodValue] = useState(5);
+  const navigate = useNavigate();
 
   const encouragingMessages = [
     "You're doing great! Keep going! 🌟",
@@ -430,6 +459,9 @@ const Dashboard = () => {
         return (
           <>
             <HomeTitle>Home</HomeTitle>
+            <BackButton onClick={() => navigate('/')}>
+              Sign Out
+            </BackButton>
             <NotesContainer>
               <Note>
                 <span>✨ Welcome Back!</span>
