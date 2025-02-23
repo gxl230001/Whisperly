@@ -148,11 +148,13 @@ const TextArea = styled.textarea`
 `;
 
 const Profile = () => {
+    const data= JSON.parse(localStorage.getItem('user'))
+    console.log(data.dob);
   const [profileData, setProfileData] = useState({
-    name: 'Sarah Johnson',
-    email: 'whiskers@pawmail.com',
-    age: '24',
-    mentalHealth: 'Anxiety, Depression',
+    name: `${data.firstName} ${data.lastName}`,
+    email: data.email,
+    dob: data.dob,
+    mentalDisorders: data.mentalDisorders.join(', '),
     bio: 'Just a cat person living in a dog world 🐱',
     interests: 'Cats, Coffee, Coding'
   });
@@ -199,6 +201,7 @@ const Profile = () => {
           onChange={(e) => handleChange(field, e.target.value)}
           disabled={!editing[field]}
           editing={editing[field]}
+          placeholder={`Enter your ${label.toLowerCase()}`}
         />
       ) : (
         <Input
@@ -207,6 +210,7 @@ const Profile = () => {
           disabled={!editing[field]}
           editing={editing[field]}
           type={field === 'age' ? 'number' : 'text'}
+          placeholder={`Enter your ${label.toLowerCase()}`}
         />
       )}
     </InfoField>
@@ -238,8 +242,8 @@ const Profile = () => {
       <InfoSection>
         {renderField('name', 'Name')}
         {renderField('email', 'Email')}
-        {renderField('age', 'Age')}
-        {renderField('mentalHealth', 'Mental Health', true)}
+        {renderField('dob', 'Date of Birth')}
+        {renderField('mentalDisorders', 'Mental Disorders', true)}
         {renderField('bio', 'Bio', true)}
         {renderField('interests', 'Interests')}
       </InfoSection>

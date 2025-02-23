@@ -9,6 +9,14 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Note: In production, make API calls from backend
 });
 
+const WhiskersImage = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 1rem auto;
+  display: block;
+`;
+
 const ChatContainer = styled.div`
   height: 500px;
   background: white;
@@ -164,6 +172,7 @@ const Chat = () => {
 
   return (
     <ChatContainer>
+      <WhiskersImage src="/whiskers.png" alt="Whiskers the cat" />
       <ChatHeader>
         <FaPaw /> Chat with Dr. Whiskers
       </ChatHeader>

@@ -4,7 +4,8 @@ import TitleScreen from './components/TitleScreen';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import Dashboard from './components/Dashboard';
-import MessagingSystem from './components/MessagingSystem';
+import Messages from './components/MessagingSystem';
+import Discover from './components/Discover';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -28,6 +29,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/discover" element={<Discover />} />
       </Routes>
     </BrowserRouter>
   );

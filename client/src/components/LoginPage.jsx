@@ -107,7 +107,9 @@ const BackLink = styled(Link)`
   &:hover {
     text-decoration: underline;
   }
-`;
+`; 
+
+
 const hashPassword=async (password)=>{
   const hash=await bcrypt.hash(password,10);
   return hash;
@@ -124,7 +126,6 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted');
     setLoggingIn(true);
     try {
       const response = await fetch('http://localhost:5000/api/login', {
@@ -134,14 +135,38 @@ const LoginPage = () => {
         },
         body: JSON.stringify(login),
       });
+      
+      
       if (!response.ok) {
         throw new Error('Login failed');
       }
+      
       const data = await response.json();
-      console.log('Login successful:', data);
+      //console.log(data.user);
       
+      const response2=await fetch('http://localhost:5000/api/friends',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+        body:JSON.stringify({friendsId:data.user.friends}),
+      });
+      const data2 = await response2.json();
+
+      const response3=await fetch('http://localhost:5000/api/all',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+        body:JSON.stringify({userId:data.user._id,friendsId:data.user.friends}),
+      });
+      const data3 = await response3.json();
+      console.log(data3.users);
+      //console.log(data2.friends);
+      localStorage.setItem('friends', JSON.stringify(data2.friends));
+      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('all', JSON.stringify(data3.all));
       navigate('/dashboard');
-      
     } catch (error) {
       console.error('Error logging in:', error);
     } finally {
