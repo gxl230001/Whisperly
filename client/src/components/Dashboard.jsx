@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaPaw } from 'react-icons/fa';
 import whiskersLogo from '../assets/images/whiskers.png';
+import Chat from './Chat';
 
 const DashboardContainer = styled.div`
   padding: 2rem;
@@ -155,6 +156,18 @@ const MessageBubble = styled.div`
 const MainContent = styled.div`
   flex: 1;
   padding: 2rem 3rem;
+  animation: slideIn 0.3s ease-out;
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 `;
 
 const HomeTitle = styled.h1`
@@ -208,6 +221,7 @@ const Note = styled.div`
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
+  const [currentView, setCurrentView] = useState('home');
 
   const encouragingMessages = [
     "You're doing great! Keep going! 🌟",
@@ -232,21 +246,75 @@ const Dashboard = () => {
     }, 3000);
   };
 
+  const renderContent = () => {
+    switch(currentView) {
+      case 'home':
+        return (
+          <>
+            <HomeTitle>Home</HomeTitle>
+            <NotesContainer>
+              <Note>
+                <span>✨ Welcome Back!</span>
+                <p>Click on Whiskers for a daily dose of encouragement 🐱</p>
+              </Note>
+              <Note>
+                <span>📢 Announcements</span>
+                <p>If you're ever feeling down, click the help button on the left. We're here for you! 💕</p>
+              </Note>
+            </NotesContainer>
+          </>
+        );
+      case 'profile':
+        return (
+          <>
+            <HomeTitle>Profile</HomeTitle>
+            <NotesContainer>
+              <Note>
+                <span>👤 Your Information</span>
+                <p>Customize your profile and settings here!</p>
+              </Note>
+            </NotesContainer>
+          </>
+        );
+      case 'chat':
+        return (
+          <>
+            <HomeTitle>Chat</HomeTitle>
+            <Chat />
+          </>
+        );
+      case 'visit':
+        return (
+          <>
+            <HomeTitle>Visit</HomeTitle>
+            <NotesContainer>
+              <Note>
+                <span>🏠 Places to Go</span>
+                <p>Explore new places and meet new friends!</p>
+              </Note>
+            </NotesContainer>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <DashboardContainer>
       <DashboardContent>
         <ButtonContainer>
-          <PawButton>
+          <PawButton onClick={() => setCurrentView('home')}>
             <FaPaw /> Home
           </PawButton>
-          <PawButton>
+          <PawButton onClick={() => setCurrentView('profile')}>
             <FaPaw /> Profile
           </PawButton>
-          <PawButton>
+          <PawButton onClick={() => setCurrentView('chat')}>
             <FaPaw /> Chat
           </PawButton>
-          <PawButton>
-            <FaPaw />  Help
+          <PawButton onClick={() => setCurrentView('visit')}>
+            <FaPaw /> Visit 
           </PawButton>
           <WhiskersContainer onClick={handleWhiskersClick}>
             <WhiskersImage src={whiskersLogo} alt="Whiskers" />
@@ -259,17 +327,7 @@ const Dashboard = () => {
         </ButtonContainer>
 
         <MainContent>
-          <HomeTitle>Home</HomeTitle>
-          <NotesContainer>
-            <Note>
-              <span>✨ Welcome Back!</span>
-              <p>Click on Whiskers for a daily dose of encouragement 🐱</p>
-            </Note>
-            <Note>
-              <span>📢 Announcements</span>
-              <p>If you're ever feeling down, click the help button on the left. We're here for you! 💕</p>
-            </Note>
-          </NotesContainer>
+          {renderContent()}
         </MainContent>
       </DashboardContent>
     </DashboardContainer>
