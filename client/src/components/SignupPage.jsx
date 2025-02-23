@@ -120,7 +120,6 @@ const BackLink = styled(Link)`
   }
 `;
 
-// Add this new styled component for the success message
 const SuccessMessage = styled.div`
   background-color: #4CAF50;
   color: white;
@@ -142,6 +141,49 @@ const SuccessMessage = styled.div`
   }
 `;
 
+// New styled components for mental health conditions section
+const ConditionsGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const HelperText = styled.p`
+  font-family: 'Poppins', sans-serif;
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: -0.3rem;
+`;
+
+const CheckboxGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const Checkbox = styled.input`
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+`;
+
+const CheckboxLabel = styled.label`
+  font-family: 'Poppins', sans-serif;
+  color: #256D85;
+  font-size: 0.9rem;
+  cursor: pointer;
+`;
+
 const SignupPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -150,9 +192,23 @@ const SignupPage = () => {
     email: '',
     password: '',
     dob: '',
-    gender: ''
+    gender: '',
+    mentalDisorders: []
   });
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+
+  const conditions = [
+    { id: 'anxiety', label: 'Anxiety' },
+    { id: 'depression', label: 'Depression' },
+    { id: 'adhd', label: 'ADHD' },
+    { id: 'autism', label: 'Autism' },
+    { id: 'ocd', label: 'OCD' },
+    { id: 'ptsd', label: 'PTSD' },
+    { id: 'dyslexia', label: 'Dyslexia' },
+    { id: 'psychotic', label: 'Psychotic Disorders' },
+    { id: 'eating', label: 'Eating Disorder' },
+    { id: 'personality', label: 'Personality Disorder' }
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -162,12 +218,33 @@ const SignupPage = () => {
     }));
   };
 
+  const handleConditionToggle = (conditionId) => {
+    setFormData(prevState => {
+      const conditions = [...prevState.mentalDisorders];
+      const index = conditions.indexOf(conditionId);
+      
+      if (index === -1) {
+        conditions.push(conditionId);
+      } else {
+        conditions.splice(index, 1);
+      }
+
+      return {
+        ...prevState,
+        mentalDisorders: conditions
+      };
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
     
-    // Check if all fields are filled
-    const allFieldsFilled = Object.values(formData).every(value => value !== '');
+    const allFieldsFilled = Object.entries(formData).every(([key, value]) => {
+      if (key === 'mentalDisorders') return true; // Optional field
+      return value !== '';
+    });
+    
     if (allFieldsFilled) {
       setIsSignupSuccess(true);
     }
@@ -260,15 +337,36 @@ const SignupPage = () => {
               <option value="prefer-not-to-say">Prefer not to say</option>
             </Select>
           </InputGroup>
+
+          <ConditionsGroup>
+            <Label>Mental Health Conditions (Optional)</Label>
+            <HelperText>
+              Select any conditions you're comfortable sharing. This information helps us provide better support.
+            </HelperText>
+            <CheckboxGrid>
+              {conditions.map((condition) => (
+                <CheckboxWrapper key={condition.id}>
+                  <Checkbox
+                    type="checkbox"
+                    id={condition.id}
+                    checked={formData.mentalDisorders.includes(condition.id)}
+                    onChange={() => handleConditionToggle(condition.id)}
+                  />
+                  <CheckboxLabel htmlFor={condition.id}>
+                    {condition.label}
+                  </CheckboxLabel>
+                </CheckboxWrapper>
+              ))}
+            </CheckboxGrid>
+          </ConditionsGroup>
           
           <SignupButton type="submit">
             Create Account
           </SignupButton>
         </Form>
-        {isSignupSuccess && (
+        {isSignupSuccess ? (
           <BackLink to="/login">← Go to Login</BackLink>
-        )}
-        {!isSignupSuccess && (
+        ) : (
           <BackLink to="/">← Back to Home</BackLink>
         )}
       </SignupBox>
@@ -276,4 +374,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage; 
+export default SignupPage;
