@@ -4,6 +4,7 @@ import { FaPaw } from 'react-icons/fa';
 import whiskersLogo from '../assets/images/whiskers.png';
 import Chat from './Chat';
 import Profile from './Profile';
+import MessagingSystem from './MessagingSystem';
 
 const DashboardContainer = styled.div`
   padding: 2rem;
@@ -40,7 +41,7 @@ const PawButton = styled.button`
   padding: 1rem;
   border: none;
   border-radius: 12px;
-  background-color: #8CC0DE;
+  background-color: ${props => props.active ? '#7AB2D0' : '#8CC0DE'};
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -266,23 +267,18 @@ const Dashboard = () => {
             <Profile />
           </>
         );
-      case 'visit':
+        case 'visit':
+          return (
+            <>
+              <HomeTitle>Visit</HomeTitle>
+              <Chat />
+            </>
+          );
+      case 'messages':
         return (
           <>
-            <HomeTitle>Visit</HomeTitle>
-            <Chat />
-          </>
-        );
-      case 'chat':
-        return (
-          <>
-            <HomeTitle>Chat</HomeTitle>
-            <NotesContainer>
-              <Note>
-                <span>🏠 Places to Go</span>
-                <p>Explore new places and meet new friends!</p>
-              </Note>
-            </NotesContainer>
+            <HomeTitle>Messages</HomeTitle>
+            <MessagingSystem />
           </>
         );
       default:
@@ -294,17 +290,29 @@ const Dashboard = () => {
     <DashboardContainer>
       <DashboardContent>
         <ButtonContainer>
-          <PawButton onClick={() => setCurrentView('home')}>
+          <PawButton 
+            onClick={() => setCurrentView('home')}
+            active={currentView === 'home'}
+          >
             <FaPaw /> Home
           </PawButton>
-          <PawButton onClick={() => setCurrentView('profile')}>
+          <PawButton 
+            onClick={() => setCurrentView('profile')}
+            active={currentView === 'profile'}
+          >
             <FaPaw /> Profile
           </PawButton>
-          <PawButton onClick={() => setCurrentView('visit')}>
+          <PawButton 
+            onClick={() => setCurrentView('visit')}
+            active={currentView === 'visit'}
+          >
             <FaPaw /> Visit
           </PawButton>
-          <PawButton onClick={() => setCurrentView('chat')}>
-            <FaPaw /> Chat
+          <PawButton 
+            onClick={() => setCurrentView('messages')}
+            active={currentView === 'messages'}
+          >
+            <FaPaw /> Messages
           </PawButton>
           <WhiskersContainer onClick={handleWhiskersClick}>
             <WhiskersImage src={whiskersLogo} alt="Whiskers" />
@@ -324,4 +332,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

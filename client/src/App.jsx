@@ -4,6 +4,7 @@ import TitleScreen from './components/TitleScreen';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import Dashboard from './components/Dashboard';
+import MessagingSystem from './components/MessagingSystem';
 
 const GlobalStyle = createGlobalStyle`
   * {
