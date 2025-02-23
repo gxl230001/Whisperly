@@ -82,19 +82,6 @@ const LoginButton = styled.button`
   }
 `;
 
-/**
- * TEMPORARY PLEASE DELETE AFTER TESTING
- */
-
-const TemporaryButton = styled(LoginButton)`
-  background-color: #FF9B9B;
-  margin-top: 1rem;
-
-  &:hover {
-    background-color: #FF7B7B;
-  }
-`;
-
 const BackLink = styled(Link)`
   color: #256D85;
   text-decoration: none;
@@ -157,26 +144,22 @@ const LoginPage = () => {
       const response3=await fetch('http://localhost:5000/api/all',{
         method:'POST',
         headers:{
-          'Content-Type':'application/json',
+          'Content-Type':'application/json', 
         },
         body:JSON.stringify({userId:data.user._id,friendsId:data.user.friends}),
       });
       const data3 = await response3.json();
-      console.log(data3.users);
-      console.log(data2.friends);
+      //console.log(data2.friends);
       localStorage.setItem('friends', JSON.stringify(data2.friends));
       localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('all', JSON.stringify(data3.all));
+      localStorage.setItem('all', JSON.stringify(data3.users));
+      console.log(data3.all);
       navigate('/dashboard');
     } catch (error) {
       console.error('Error logging in:', error);
     } finally {
       setLoggingIn(false);
     }
-  };
-
-  const handleTemporaryAccess = () => {
-    navigate('/dashboard');
   };
 
   return (
@@ -207,9 +190,6 @@ const LoginPage = () => {
             />
           </InputGroup>
           <LoginButton type="submit">Log In</LoginButton>
-          <TemporaryButton type="button" onClick={handleTemporaryAccess}>
-            Temporary Access
-          </TemporaryButton>
         </Form>
         <BackLink to="/">← Back to Home</BackLink>
       </LoginBox>

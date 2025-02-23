@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import OpenAI from 'openai';
 import { FaPaw, FaPaperPlane } from 'react-icons/fa';
+import visitIcon from '../assets/images/a1.png';
 
 // Initialize OpenAI with API key
 const openai = new OpenAI({
@@ -17,6 +18,19 @@ const WhiskersImage = styled.img`
   display: block;
 `;
 
+const DrWhiskersImage = styled.img`
+  width: 250px;
+  height: 250px;
+  position: absolute;
+  top: -125px;
+  right: -50px;
+  opacity: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  z-index: 10;
+  transform: rotate(5deg);
+`;
+
 const ChatContainer = styled.div`
   height: 500px;
   background: white;
@@ -24,10 +38,14 @@ const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: visible;
+  margin-top: 125px;
 `;
 
 const ChatHeader = styled.div`
   padding: 1rem;
+  padding-right: 200px;
   background: #8CC0DE;
   color: white;
   border-radius: 15px 15px 0 0;
@@ -36,6 +54,8 @@ const ChatHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+  z-index: 1;
 `;
 
 const MessagesContainer = styled.div`
@@ -172,7 +192,7 @@ const Chat = () => {
 
   return (
     <ChatContainer>
-      <WhiskersImage src="/whiskers.png" alt="Whiskers the cat" />
+      <DrWhiskersImage src={visitIcon} alt="Dr. Whiskers" />
       <ChatHeader>
         <FaPaw /> Chat with Dr. Whiskers
       </ChatHeader>
