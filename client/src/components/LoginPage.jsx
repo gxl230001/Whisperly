@@ -152,6 +152,7 @@ const LoginPage = () => {
         body:JSON.stringify({friendsId:data.user.friends}),
       });
       const data2 = await response2.json();
+      
 
       const response3=await fetch('http://localhost:5000/api/all',{
         method:'POST',
@@ -162,7 +163,7 @@ const LoginPage = () => {
       });
       const data3 = await response3.json();
       console.log(data3.users);
-      //console.log(data2.friends);
+      console.log(data2.friends);
       localStorage.setItem('friends', JSON.stringify(data2.friends));
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('all', JSON.stringify(data3.all));

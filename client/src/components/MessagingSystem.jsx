@@ -186,126 +186,156 @@ const Sidebar = styled.div`
 `;
 
 const MessagingSystem = () => {
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
-  const friends = JSON.parse(localStorage.getItem('friends')) || [];
-
-  const conversations = friends.map((friend) => ({
-    id: friend._id,
-    name: `${friend.firstName} ${friend.lastName}`,
-    role: 'Friend'
-  }));
-  const [activeConversation, setActiveConversation] = useState(1);
-  const messagesEndRef = useRef(null);
-  const socketRef = useRef(null);
-
-  useEffect(() => {
-    socketRef.current = io('http://localhost:3001', {
-      withCredentials: true,
-    });
-
-    socketRef.current.on('message', (message) => {
-      setMessages(prev => [...prev, message]);
-    });
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
+    const [messages, setMessages] = useState({});  // Changed to object to store messages by room
+    const [newMessage, setNewMessage] = useState('');
+    const [activeConversation, setActiveConversation] = useState(null);
+    const navigate = useNavigate();
+    const friends = JSON.parse(localStorage.getItem('friends')) || [];
+    const socketRef = useRef(null);
+    const messagesEndRef = useRef(null);
+    const [connected, setConnected] = useState(false);
+  
+    const conversations = friends.map((friend) => ({
+      id: friend._id,
+      name: `${friend.firstName} ${friend.lastName}`,
+      role: 'Friend'
+    }));
+  
+    useEffect(() => {
+      // Connect to the Socket.IO server (use your server port)
+      socketRef.current = io('http://localhost:5000', {
+        withCredentials: true,
+      });
+  
+      // Handle connection
+      socketRef.current.on('connect', () => {
+        console.log('Connected to socket server');
+        setConnected(true);
+      });
+  
+      // Handle incoming messages
+      socketRef.current.on('receive_message', (message) => {
+        setMessages(prev => ({
+          ...prev,
+          [message.room]: [...(prev[message.room] || []), message]
+        }));
+      });
+  
+      // Cleanup on unmount
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+        }
+      };
+    }, []);
+  
+    // Join room when active conversation changes
+    useEffect(() => {
+      if (activeConversation && connected) {
+        socketRef.current.emit('join_room', activeConversation);
       }
+    }, [activeConversation, connected]);
+  
+    // Scroll to bottom when messages change
+    useEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, activeConversation]);
+  
+    const handleSendMessage = (e) => {
+      e.preventDefault();
+      if (!newMessage.trim() || !activeConversation) return;
+  
+      const messageData = {
+        id: Date.now(),
+        text: newMessage,
+        sender: localStorage.getItem('userId'), // Get actual user ID from your auth system
+        timestamp: new Date().toISOString(),
+        room: activeConversation,
+      };
+  
+      // Emit the message to the server
+      socketRef.current.emit('send_message', messageData);
+  
+      // Update local state immediately
+      setMessages(prev => ({
+        ...prev,
+        [activeConversation]: [...(prev[activeConversation] || []), messageData]
+      }));
+  
+      setNewMessage('');
     };
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
-
-    const message = {
-      id: Date.now(),
-      text: newMessage,
-      sender: 'user',
-      timestamp: new Date().toISOString(),
-      conversationId: activeConversation,
+  
+    const handleConversationSelect = (convId) => {
+      setActiveConversation(convId);
+      // You might want to load previous messages here from your backend
     };
-
-    socketRef.current.emit('message', message);
-    setMessages(prev => [...prev, message]);
-    setNewMessage('');
-  };
-
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
-
-  return (
-    <Container>
-      <ConversationsList>
-        <ConversationsHeader>
-          <h3>Conversations</h3>
-        </ConversationsHeader>
-        {conversations.map((conv) => (
-          <ConversationItem 
-            key={conv.id}
-            active={activeConversation === conv.id}
-            onClick={() => setActiveConversation(conv.id)}
-          >
-            <ConversationHeader>
-              <Avatar>{conv.name[0]}</Avatar>
-              <ConversationInfo>
-                <Name>{conv.name}</Name>
-                <Role>{conv.role}</Role>
-              </ConversationInfo>
-              {conv.unread > 0 && (
-                <UnreadBadge>{conv.unread}</UnreadBadge>
-              )}
-            </ConversationHeader>
-          </ConversationItem>
-        ))}
-      </ConversationsList>
-
-      <ChatArea>
-        <ChatHeader>
-          <h3>{conversations.find(c => c.id === activeConversation)?.name}</h3>
-        </ChatHeader>
-
-        <MessagesContainer>
-          {messages
-            .filter(m => m.conversationId === activeConversation)
-            .map((message) => (
-              <Message key={message.id} sent={message.sender === 'user'}>
-                <MessageBubble sent={message.sender === 'user'}>
+  
+    const formatTime = (timestamp) => {
+      return new Date(timestamp).toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    };
+  
+    return (
+      <Container>
+        <ConversationsList>
+          <ConversationsHeader>
+            <h3>Conversations</h3>
+          </ConversationsHeader>
+          {conversations.map((conv) => (
+            <ConversationItem 
+              key={conv.id}
+              active={activeConversation === conv.id}
+              onClick={() => handleConversationSelect(conv.id)}
+            >
+              <ConversationHeader>
+                <Avatar>{conv.name[0]}</Avatar>
+                <ConversationInfo>
+                  <Name>{conv.name}</Name>
+                  <Role>{conv.role}</Role>
+                </ConversationInfo>
+                {conv.unread > 0 && (
+                  <UnreadBadge>{conv.unread}</UnreadBadge>
+                )}
+              </ConversationHeader>
+            </ConversationItem>
+          ))}
+        </ConversationsList>
+  
+        <ChatArea>
+          <ChatHeader>
+            <h3>{conversations.find(c => c.id === activeConversation)?.name || 'Select a conversation'}</h3>
+          </ChatHeader>
+  
+          <MessagesContainer>
+            {activeConversation && messages[activeConversation]?.map((message) => (
+              <Message key={message.id} sent={message.sender === localStorage.getItem('userId')}>
+                <MessageBubble sent={message.sender === localStorage.getItem('userId')}>
                   {message.text}
                 </MessageBubble>
-                <MessageTime sent={message.sender === 'user'}>
+                <MessageTime sent={message.sender === localStorage.getItem('userId')}>
                   {formatTime(message.timestamp)}
                 </MessageTime>
               </Message>
-          ))}
-          <div ref={messagesEndRef} />
-        </MessagesContainer>
-
-        <InputArea onSubmit={handleSendMessage}>
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-          />
-          <SendButton type="submit" disabled={!newMessage.trim()}>
-            Send
-          </SendButton>
-        </InputArea>
-      </ChatArea>
-    </Container>
-  );
-};
-
-export default MessagingSystem;
+            ))}
+            <div ref={messagesEndRef} />
+          </MessagesContainer>
+  
+          <InputArea onSubmit={handleSendMessage}>
+            <Input
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message..."
+              disabled={!activeConversation}
+            />
+            <SendButton type="submit" disabled={!newMessage.trim() || !activeConversation}>
+              Send
+            </SendButton>
+          </InputArea>
+        </ChatArea>
+      </Container>
+    );
+  };
+  
+  export default MessagingSystem;
