@@ -177,12 +177,6 @@ const HomeTitle = styled.h1`
   color: #2B4865;
   margin-bottom: 1.5rem;
   position: relative;
-  
-  &:after {
-    content: '🏠';
-    font-size: 1.5rem;
-    margin-left: 0.5rem;
-  }
 `;
 
 const NotesContainer = styled.div`
@@ -272,17 +266,17 @@ const Dashboard = () => {
             <Profile />
           </>
         );
-      case 'chat':
-        return (
-          <>
-            <HomeTitle>Chat</HomeTitle>
-            <Chat />
-          </>
-        );
       case 'visit':
         return (
           <>
             <HomeTitle>Visit</HomeTitle>
+            <Chat />
+          </>
+        );
+      case 'chat':
+        return (
+          <>
+            <HomeTitle>Chat</HomeTitle>
             <NotesContainer>
               <Note>
                 <span>🏠 Places to Go</span>
@@ -306,11 +300,11 @@ const Dashboard = () => {
           <PawButton onClick={() => setCurrentView('profile')}>
             <FaPaw /> Profile
           </PawButton>
+          <PawButton onClick={() => setCurrentView('visit')}>
+            <FaPaw /> Visit
+          </PawButton>
           <PawButton onClick={() => setCurrentView('chat')}>
             <FaPaw /> Chat
-          </PawButton>
-          <PawButton onClick={() => setCurrentView('visit')}>
-            <FaPaw /> Visit 
           </PawButton>
           <WhiskersContainer onClick={handleWhiskersClick}>
             <WhiskersImage src={whiskersLogo} alt="Whiskers" />
