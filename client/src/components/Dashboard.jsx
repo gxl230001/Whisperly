@@ -15,39 +15,43 @@ const DashboardContent = styled.div`
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  min-height: 600px;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin-top: 2rem;
-  justify-content: center;
-  width: 100%;
+  padding-top: 2rem;
+  border-right: 2px solid #E0F4FF;
+  padding-right: 2rem;
+  width: 150px;
+  height: 100%;
 `;
 
 const PawButton = styled.button`
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
+  justify-content: flex-start;
+  gap: 0.8rem;
+  padding: 1rem;
   border: none;
-  border-radius: 20px;
+  border-radius: 12px;
   background-color: #8CC0DE;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'Poppins', sans-serif;
+  width: 100%;
 
   &:hover {
     background-color: #7AB2D0;
-    transform: translateY(-2px);
+    transform: translateX(5px);
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateX(0);
   }
 
   svg {
@@ -59,10 +63,11 @@ const Title = styled.h1`
   font-family: 'Montserrat', sans-serif;
   font-size: 1.8rem;
   color: #2B4865;
-  margin-bottom: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-align: center;
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
 `;
 
 const Subtitle = styled.p`
@@ -73,19 +78,17 @@ const Subtitle = styled.p`
 `;
 
 const WhiskersContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  position: absolute;
+  bottom: 2rem;
+  left: 1rem;
   cursor: pointer;
   text-align: center;
-  position: relative;
+  width: 150px;
 `;
 
 const WhiskersImage = styled.img`
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 50%;
   transition: transform 0.3s ease;
@@ -97,25 +100,25 @@ const WhiskersImage = styled.img`
 
 const MessageBubble = styled.div`
   background-color: #FFF5E0;
-  padding: 1rem;
+  padding: 0.8rem;
   border-radius: 15px;
   position: absolute;
-  margin-top: 200px;
+  bottom: 120px;
+  left: 0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  max-width: 300px;
+  max-width: 150px;
   animation: fadeIn 0.5s ease-in;
   z-index: 1;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 
   &:before {
     content: '';
     position: absolute;
-    left: 50%;
-    top: -10px;
-    transform: translateX(-50%);
+    bottom: -10px;
+    left: 45px;
     border-width: 10px;
     border-style: solid;
-    border-color: transparent transparent #FFF5E0 transparent;
+    border-color: #FFF5E0 transparent transparent transparent;
   }
 
   @keyframes fadeIn {
@@ -130,6 +133,26 @@ const MessageBubble = styled.div`
   }
 `;
 
+const MainContent = styled.div`
+  flex: 1;
+  padding: 2rem 3rem;
+`;
+
+const HomeTitle = styled.h1`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  color: #2B4865;
+  margin-bottom: 0.5rem;
+`;
+
+const Note = styled.p`
+  font-family: 'Poppins', sans-serif;
+  color: #256D85;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-style: italic;
+`;
+
 const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
@@ -138,7 +161,7 @@ const Dashboard = () => {
     "You're doing great! Keep going! 🌟",
     "Every small step counts! Proud of you! 🎉",
     "You've got this! I believe in you! 💪",
-    "Remember to take breaks and stay pawsitive! 🐾",
+    "Remember to stay pawsitive! 🐾",
     "You're making amazing progress! 🌈",
     "Paws and relax! 🐱",
     "Today is a great day to be amazing! ✨",
@@ -160,17 +183,10 @@ const Dashboard = () => {
   return (
     <DashboardContainer>
       <DashboardContent>
-        <WhiskersContainer onClick={handleWhiskersClick}>
-          <Title>Home</Title>
-          <WhiskersImage src={whiskersLogo} alt="Whiskers" />
-          {showMessage && (
-            <MessageBubble>
-              {message}
-            </MessageBubble>
-          )}
-        </WhiskersContainer>
-        
         <ButtonContainer>
+          <PawButton>
+            <FaPaw /> Home
+          </PawButton>
           <PawButton>
             <FaPaw /> Profile
           </PawButton>
@@ -178,9 +194,23 @@ const Dashboard = () => {
             <FaPaw /> Chat
           </PawButton>
           <PawButton>
-            <FaPaw /> 
+            <FaPaw />  Help
           </PawButton>
+          <WhiskersContainer onClick={handleWhiskersClick}>
+            <WhiskersImage src={whiskersLogo} alt="Whiskers" />
+            {showMessage && (
+              <MessageBubble>
+                {message}
+              </MessageBubble>
+            )}
+          </WhiskersContainer>
         </ButtonContainer>
+
+        <MainContent>
+          <HomeTitle>Home</HomeTitle>
+          <Note>Welcome back! Click on Whiskers for a daily dose of encouragement 🐱</Note>
+          <Note>Announcements: If you're ever feeling down, click the help button on the</Note>
+        </MainContent>
       </DashboardContent>
     </DashboardContainer>
   );
