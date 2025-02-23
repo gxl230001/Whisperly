@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FaPaw } from 'react-icons/fa';
 import whiskersLogo from '../assets/images/whiskers.png';
 import Chat from './Chat';
+import Profile from './Profile';
 
 const DashboardContainer = styled.div`
   padding: 2rem;
@@ -268,12 +269,7 @@ const Dashboard = () => {
         return (
           <>
             <HomeTitle>Profile</HomeTitle>
-            <NotesContainer>
-              <Note>
-                <span>👤 Your Information</span>
-                <p>Customize your profile and settings here!</p>
-              </Note>
-            </NotesContainer>
+            <Profile />
           </>
         );
       case 'chat':
