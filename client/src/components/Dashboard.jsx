@@ -458,20 +458,20 @@ const AddFriendButton = styled.button`
   padding: 0.6rem 1rem;
   border: none;
   border-radius: 20px;
-  background-color: #8CC0DE;
+  background-color: ${props => props.disabled ? '#A9A9A9' : '#8CC0DE'};
   color: white;
   font-family: 'Poppins', sans-serif;
   font-size: 0.9rem;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'default' : 'pointer'};
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #7AB2D0;
-    transform: scale(1.05);
+    background-color: ${props => props.disabled ? '#A9A9A9' : '#7AB2D0'};
+    transform: ${props => props.disabled ? 'none' : 'scale(1.05)'};
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: ${props => props.disabled ? 'none' : 'scale(0.95)'};
   }
 `;
 
@@ -480,6 +480,7 @@ const Dashboard = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [currentView, setCurrentView] = useState('home');
   const [moodValue, setMoodValue] = useState(5);
+  const [pendingFriends, setPendingFriends] = useState(new Set());
   const navigate = useNavigate();
 
   const encouragingMessages = [
@@ -641,19 +642,35 @@ const Dashboard = () => {
                 const users = JSON.parse(localStorage.getItem('all')) || [];
                 return (
                   <UserGrid>
-                    {users.map((user) => (
-                      <UserCard key={user.firstName + user.lastName}>
-                        <UserAvatar 
-                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" 
-                          alt="User Avatar" 
-                        />
-                        <UserName>{user.firstName} {user.lastName}</UserName>
-                        <UserInfo>{user.mentalDisorders.join(', ')}</UserInfo>
-                        <AddFriendButton>
-                          <FaPaw /> Add Friend
-                        </AddFriendButton>
-                      </UserCard>
-                    ))}
+                    {users.map((user) => {
+                      const userId = user.firstName + user.lastName;
+                      const isPending = pendingFriends.has(userId);
+                      
+                      return (
+                        <UserCard key={userId}>
+                          <UserAvatar 
+                            src="https://api.dicebear.com/7.x/shapes/svg?seed=?&backgroundColor=8CC0DE" 
+                            alt="User Avatar" 
+                          />
+                          <UserName>{user.firstName} {user.lastName}</UserName>
+                          <UserInfo>{user.mentalDisorders.join(', ')}</UserInfo>
+                          <AddFriendButton 
+                            onClick={() => {
+                              if (!isPending) {
+                                setPendingFriends(prev => new Set([...prev, userId]));
+                              }
+                            }}
+                            disabled={isPending}
+                            style={{
+                              backgroundColor: isPending ? '#gray' : '#8CC0DE',
+                              cursor: isPending ? 'default' : 'pointer'
+                            }}
+                          >
+                            {isPending ? 'Pending' : <><FaPaw /> Add Friend</>}
+                          </AddFriendButton>
+                        </UserCard>
+                      );
+                    })}
                   </UserGrid>
                 );
               })()}

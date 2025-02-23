@@ -82,19 +82,6 @@ const LoginButton = styled.button`
   }
 `;
 
-/**
- * TEMPORARY PLEASE DELETE AFTER TESTING
- */
-
-const TemporaryButton = styled(LoginButton)`
-  background-color: #FF9B9B;
-  margin-top: 1rem;
-
-  &:hover {
-    background-color: #FF7B7B;
-  }
-`;
-
 const BackLink = styled(Link)`
   color: #256D85;
   text-decoration: none;
@@ -156,7 +143,7 @@ const LoginPage = () => {
       const response3=await fetch('http://localhost:5000/api/all',{
         method:'POST',
         headers:{
-          'Content-Type':'application/json',
+          'Content-Type':'application/json', 
         },
         body:JSON.stringify({userId:data.user._id,friendsId:data.user.friends}),
       });
@@ -172,10 +159,6 @@ const LoginPage = () => {
     } finally {
       setLoggingIn(false);
     }
-  };
-
-  const handleTemporaryAccess = () => {
-    navigate('/dashboard');
   };
 
   return (
@@ -206,9 +189,6 @@ const LoginPage = () => {
             />
           </InputGroup>
           <LoginButton type="submit">Log In</LoginButton>
-          <TemporaryButton type="button" onClick={handleTemporaryAccess}>
-            Temporary Access
-          </TemporaryButton>
         </Form>
         <BackLink to="/">← Back to Home</BackLink>
       </LoginBox>
