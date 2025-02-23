@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -176,14 +177,27 @@ const SendButton = styled.button`
   }
 `;
 
+const Sidebar = styled.div`
+  width: 300px;
+  background-color: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+`;
+
 const MessagingSystem = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [conversations, setConversations] = useState([
-    { id: 1, name: 'Dr. Smith', role: 'Veterinarian', unread: 2 },
-    { id: 2, name: 'Pet Hotel', role: 'Service', unread: 0 },
-    { id: 3, name: 'Grooming Spa', role: 'Service', unread: 1 }
-  ]);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+  const friends = JSON.parse(localStorage.getItem('friends')) || [];
+
+  const conversations = friends.map((friend) => ({
+    id: friend._id,
+    name: `${friend.firstName} ${friend.lastName}`,
+    role: 'Friend'
+  }));
   const [activeConversation, setActiveConversation] = useState(1);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);

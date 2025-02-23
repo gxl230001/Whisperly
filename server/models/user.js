@@ -70,5 +70,17 @@ userSchema.statics.createNewUser=async function (email,firstName,lastName,passwo
 userSchema.statics.getUserByEmail=async function(email){
     return (await this.find({email:email}))[0];
   }
+  userSchema.statics.getUserById = async function (id) {
+    return await this.findById(id);
+};
+
+userSchema.statics.getUserById = async function (id) {
+    return await this.findById(id);
+};
+userSchema.statics.getAllUsers = async function () {
+    return await this.find({});
+  };
+  
+
 module.exports=mongoose.model('User',userSchema);
 
