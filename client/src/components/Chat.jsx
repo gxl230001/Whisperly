@@ -129,7 +129,7 @@ const Chat = () => {
 
         // Get AI response
         const completion = await openai.chat.completions.create({
-          model: "gpt-4o", // Using gpt-3.5-turbo as gpt-4o-mini doesn't exist
+          model: "gpt-4o",
           messages: [
             { role: "system", content: "You are a helpful and friendly AI assistant named Whiskers. You like to use cat emojis in your responses." },
             { role: "user", content: newMessage }
@@ -165,7 +165,7 @@ const Chat = () => {
   return (
     <ChatContainer>
       <ChatHeader>
-        <FaPaw /> Chat with Whiskers
+        <FaPaw /> Chat with Dr. Whiskers
       </ChatHeader>
       <MessagesContainer>
         {messages.map((message, index) => (
@@ -175,7 +175,7 @@ const Chat = () => {
         ))}
         {isLoading && (
           <LoadingMessage>
-            Thinking... 🐱
+            Thinking... 🐱 :3
           </LoadingMessage>
         )}
       </MessagesContainer>
