@@ -16,7 +16,6 @@
     "url": "https://github.com/gxl230001/Whisperly/issues"
   },
   "homepage": "https://github.com/gxl230001/Whisperly#readme",
-  "description": "",
   "devDependencies": {
     "nodemon": "^3.1.9"
   },
@@ -27,5 +26,6 @@
     "http-status-codes": "^2.3.0",
     "mongoose": "^8.10.1",
     "whisperly": "file:"
-  }
+  },
+  "description": ""
 }
