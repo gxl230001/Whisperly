@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import OpenAI from 'openai';
 import { FaPaw, FaPaperPlane } from 'react-icons/fa';
+
+// Initialize OpenAI with API key
+const openai = new OpenAI({
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true // Note: In production, make API calls from backend
+});
 
 const ChatContainer = styled.div`
   height: 500px;
@@ -18,6 +25,9 @@ const ChatHeader = styled.div`
   border-radius: 15px 15px 0 0;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const MessagesContainer = styled.div`
@@ -79,46 +89,75 @@ const SendButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: #7AB2D0;
     transform: scale(1.1);
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: scale(1);
   }
 `;
 
+const LoadingMessage = styled(Message)`
+  background-color: #F0F0F0;
+  color: #666;
+  align-self: flex-start;
+`;
+
 const Chat = () => {
   const [messages, setMessages] = useState([
-    { text: "Hello! How are you today? 🐱", sent: false },
-    { text: "I'm doing great, thanks for asking! 🌟", sent: true },
+    { text: "Hello! How can I help you today? 🐱", sent: false }
   ]);
   const [newMessage, setNewMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
-    if (newMessage.trim()) {
-      setMessages([...messages, { text: newMessage, sent: true }]);
-      setNewMessage('');
-      
-      // Simulate received message after a delay
-      setTimeout(() => {
-        const responses = [
-          "That's wonderful! 🐱",
-          "Tell me more! 🐾",
-          "How interesting! 🌟",
-          "Purr-fect! 😺",
-          "Meow-velous! 🐱"
-        ];
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        setMessages(prev => [...prev, { text: randomResponse, sent: false }]);
-      }, 1000);
+  const handleSend = async () => {
+    if (newMessage.trim() && !isLoading) {
+      try {
+        setIsLoading(true);
+        // Add user message
+        const userMessage = { text: newMessage, sent: true };
+        setMessages(prevMessages => [...prevMessages, userMessage]);
+        setNewMessage('');
+
+        // Get AI response
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o", // Using gpt-3.5-turbo as gpt-4o-mini doesn't exist
+          messages: [
+            { role: "system", content: "You are a helpful and friendly AI assistant named Whiskers. You like to use cat emojis in your responses." },
+            { role: "user", content: newMessage }
+          ],
+          max_tokens: 150
+        });
+
+        // Add AI response
+        const aiMessage = { 
+          text: completion.choices[0].message.content, 
+          sent: false 
+        };
+        setMessages(prevMessages => [...prevMessages, aiMessage]);
+      } catch (error) {
+        console.error('Error:', error);
+        setMessages(prevMessages => [...prevMessages, { 
+          text: "I apologize, but I'm having trouble responding right now 😿", 
+          sent: false 
+        }]);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       handleSend();
     }
   };
@@ -134,6 +173,11 @@ const Chat = () => {
             {message.text}
           </Message>
         ))}
+        {isLoading && (
+          <LoadingMessage>
+            Thinking... 🐱
+          </LoadingMessage>
+        )}
       </MessagesContainer>
       <InputContainer>
         <Input
@@ -142,8 +186,9 @@ const Chat = () => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
+          disabled={isLoading}
         />
-        <SendButton onClick={handleSend}>
+        <SendButton onClick={handleSend} disabled={isLoading || !newMessage.trim()}>
           <FaPaperPlane />
         </SendButton>
       </InputContainer>
@@ -151,4 +196,4 @@ const Chat = () => {
   );
 };
 
-export default Chat; 
+export default Chat;
