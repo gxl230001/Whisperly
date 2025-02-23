@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import bcrypt from 'bcryptjs';
 const LoginContainer = styled.div`
@@ -82,6 +82,19 @@ const LoginButton = styled.button`
   }
 `;
 
+/**
+ * TEMPORARY PLEASE DELETE AFTER TESTING
+ */
+
+const TemporaryButton = styled(LoginButton)`
+  background-color: #FF9B9B;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #FF7B7B;
+  }
+`;
+
 const BackLink = styled(Link)`
   color: #256D85;
   text-decoration: none;
@@ -102,6 +115,7 @@ const hashPassword=async (password)=>{
 }
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [login, setLogin] = useState({
     email: '',
     password: '',
@@ -110,7 +124,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submittedasdsad');
+    console.log('Form submitted');
     setLoggingIn(true);
     try {
       const response = await fetch('http://localhost:5000/api/login', {
@@ -125,11 +139,18 @@ const LoginPage = () => {
       }
       const data = await response.json();
       console.log('Login successful:', data);
+      
+      navigate('/dashboard');
+      
     } catch (error) {
       console.error('Error logging in:', error);
     } finally {
       setLoggingIn(false);
     }
+  };
+
+  const handleTemporaryAccess = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -160,6 +181,9 @@ const LoginPage = () => {
             />
           </InputGroup>
           <LoginButton type="submit">Log In</LoginButton>
+          <TemporaryButton type="button" onClick={handleTemporaryAccess}>
+            Temporary Access
+          </TemporaryButton>
         </Form>
         <BackLink to="/">← Back to Home</BackLink>
       </LoginBox>

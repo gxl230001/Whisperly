@@ -17,7 +17,7 @@ const addNewUser= async (req,res)=>{
 
 }
 const getUser=async(req,res)=>{
-  res.status(StatusCodes.OK).json({success:true,user:res.locals.user});
+  res.status(StatusCodes.OK).json({success:true,user:res.locals.user._id});
 }
 
 

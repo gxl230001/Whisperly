@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SignupContainer = styled.div`
   display: flex;
@@ -120,7 +120,30 @@ const BackLink = styled(Link)`
   }
 `;
 
+// Add this new styled component for the success message
+const SuccessMessage = styled.div`
+  background-color: #4CAF50;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -129,6 +152,7 @@ const SignupPage = () => {
     dob: '',
     gender: ''
   });
+  const [isSignupSuccess, setIsSignupSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -141,13 +165,23 @@ const SignupPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Add signup logic here
+    
+    // Check if all fields are filled
+    const allFieldsFilled = Object.values(formData).every(value => value !== '');
+    if (allFieldsFilled) {
+      setIsSignupSuccess(true);
+    }
   };
 
   return (
     <SignupContainer>
       <SignupBox>
         <Title>Create Account</Title>
+        {isSignupSuccess && (
+          <SuccessMessage>
+            Account successfully created! You can now log in.
+          </SuccessMessage>
+        )}
         <Form onSubmit={handleSubmit}>
           <Row>
             <InputGroup>
@@ -227,9 +261,16 @@ const SignupPage = () => {
             </Select>
           </InputGroup>
           
-          <SignupButton type="submit">Create Account</SignupButton>
+          <SignupButton type="submit">
+            Create Account
+          </SignupButton>
         </Form>
-        <BackLink to="/">← Back to Home</BackLink>
+        {isSignupSuccess && (
+          <BackLink to="/login">← Go to Login</BackLink>
+        )}
+        {!isSignupSuccess && (
+          <BackLink to="/">← Back to Home</BackLink>
+        )}
       </SignupBox>
     </SignupContainer>
   );
